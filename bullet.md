@@ -113,7 +113,7 @@ body {
 
 但因为动画是同时开启的，所以看起来，怪怪的。
 
-错峰的逻辑如下：
+错峰的逻辑如下，以下也是本文的**核心**：
 
 首先分成两个集合
 
@@ -144,11 +144,11 @@ export default {
     return {
       // 将要显示的弹幕队列
       waitBullets: [
-        { id: getUUID(), name: "一场说走就走的旅行", isWished: false, line: 0 },
-        { id: getUUID(), name: "结束单身汪", isWished: false, line: 0 },
-        { id: getUUID(), name: "明年暴瘦10斤", isWished: false, line: 0 },
-        { id: getUUID(), name: "多陪伴父母", isWished: false, line: 0 },
-        { id: getUUID(), name: "赚到1个亿,买别墅", isWished: false, line: 0 }
+        { id: getUUID(), name: "一场说走就走的旅行", line: 0 },
+        { id: getUUID(), name: "结束单身汪", line: 0 },
+        { id: getUUID(), name: "明年暴瘦10斤", line: 0 },
+        { id: getUUID(), name: "多陪伴父母", line: 0 },
+        { id: getUUID(), name: "赚到1个亿,买别墅", line: 0 }
       ],
       showingBullets: [],
       lines: 5,
@@ -164,7 +164,7 @@ export default {
       if (!this.waitBullets.length) {
         return;
       }
-      // 先确定弹道
+      // 先确定弹道，跟上一个弹道错开即可
       this.currentLine = (this.currentLine % this.lines) + 1;
       // 从等待集合里取出第一个
       const currentBullet = this.waitBullets.shift();
@@ -221,3 +221,26 @@ body {
 </style>
 
 ```
+
+## 发送新弹幕
+
+发送新弹幕，其实没啥，送到等待队列里即可。
+
+```js
+clickSend() {
+    if (!this.newBullet) { return; } 
+    const newBullet = { id: getUUID(), name: this.newBullet, line: 0 };
+    this.waitBullets.push(newBullet);
+}
+```
+
+```pug
+  div.input-wrap
+    input(v-model.trim="newBullet" type='text' maxlength='12' placeholder='来说点什么')
+    button.btn(@click="clickSend") 发送
+```
+
+## 优化
+
+- 弹幕从屏幕上消失之后，需要从显示队列里移除
+- 想无限循环弹幕列表，需要在等待队列推出第一个的时候，顺手将这个再塞到等待队列里

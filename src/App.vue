@@ -2,6 +2,9 @@
 div#app
   div.bullet-wrap
     div.bullet-item(v-for="item in showingBullets" :key="item.id" :data-line="item.line") {{item.name}}
+  div.input-wrap
+    input(v-model.trim="newBullet" type='text' maxlength='12' placeholder='来说点什么')
+    button.btn(@click="clickSend") 发送
 </template>
 <script>
 const getUUID = () => Math.random() + Math.random();
@@ -18,7 +21,8 @@ export default {
       ],
       showingBullets: [],
       lines: 5,
-      currentLine: 1
+      currentLine: 1,
+      newBullet: ""
     };
   },
   mounted() {
@@ -30,7 +34,7 @@ export default {
       if (!this.waitBullets.length) {
         return;
       }
-      // 先确定弹道
+      // 先确定弹道，跟上一个弹道错开即可
       this.currentLine = (this.currentLine % this.lines) + 1;
       // 从等待集合里取出第一个
       const currentBullet = this.waitBullets.shift();
@@ -38,6 +42,18 @@ export default {
       currentBullet.line = this.currentLine;
       // 弹幕放进显示集合里，弹幕开始滚动
       this.showingBullets.push(currentBullet);
+    },
+    clickSend() {
+      if (!this.newBullet) {
+        return;
+      }
+      const newBullet = {
+        id: getUUID(),
+        name: this.newBullet,
+        isWished: false,
+        line: 0
+      };
+      this.waitBullets.push(newBullet);
     }
   }
 };
