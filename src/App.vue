@@ -1,28 +1,15 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+<template lang="pug">
+div#app
+  div.bullet-wrap
+    div.bullet-item 减肥成功！
 </template>
 
-<script>
-import HelloWorld from "./components/HelloWorld.vue";
-
-export default {
-  name: "App",
-  components: {
-    HelloWorld
-  }
-};
-</script>
-
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+body {
+  margin: 0;
+}
+.bullet-wrap {
+  height: 375px;
+  background-color: #eee;
 }
 </style>
