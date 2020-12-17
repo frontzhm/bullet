@@ -1,7 +1,7 @@
 <template lang="pug">
 div#app
   div.bullet-wrap
-    div.bullet-item(v-for="item in showingBullets" @animationend='removeBullet' :key="item.id" :data-line="item.line") {{item.name}}
+    div.bullet-item(v-for="item in showingBullets" :style="{ transform:item.translate,animation:item.animate,color:'red' }" @animationend='removeBullet(item)' :key="item.id" :data-line="item.line") {{item.name}}
   div.input-wrap
     input(v-model.trim="newBullet" type='text' maxlength='12' placeholder='来说点什么')
     button.btn(@click="clickSend") 发送
@@ -25,49 +25,64 @@ export default {
           name: "一场说走就走的旅行",
           isWished: false,
           line: 1,
-          left: "280px"
+          translate: "translate(0vw)",
+          animate: "rightToleft 1s linear forwards"
         },
         {
           id: getUUID(),
-          name: "结束单身汪",
+          name: "一场说走就走的旅行",
+          isWished: false,
+          line: 1,
+          translate: "translate(70vw)",
+          animate: "rightToleft 5s linear forwards"
+        },
+        {
+          id: getUUID(),
+          name: "结束单身汪，一百年",
           isWished: false,
           line: 2,
-          left: "-280px"
+          translate: "translate(-10vw)",
+          animate: "rightToleft 1s linear forwards"
         },
         {
           id: getUUID(),
           name: "人生若只如初见，害",
           isWished: false,
           line: 2,
-          left: "500px"
+          translate: "translate(50vw)",
+          animate: "rightToleft 4s linear forwards"
         },
         {
           id: getUUID(),
           name: "明年暴瘦10斤",
           isWished: false,
           line: 3,
-          left: "280px"
+          translate: "translate(20vw)",
+          animate: "rightToleft 3s linear forwards"
         },
         {
           id: getUUID(),
           name: "多陪伴父母",
           isWished: false,
           line: 4,
-          left: "0px"
+          translate: "translate(40vw)",
+          animate: "rightToleft 5s linear forwards"
         },
         {
           id: getUUID(),
           name: "多陪伴父母",
           isWished: false,
-          line: 4,
-          left: "380px"
+          line: 5,
+          translate: "translate(-20vw)",
+          animate: "rightToleft 0.5s linear forwards"
         },
         {
           id: getUUID(),
           name: "赚到1个亿,买别墅",
           isWished: false,
           line: 5,
-          left: "141px"
+          translate: "translate(60vw)",
+          animate: "rightToleft 3s linear forwards"
         }
       ],
       lines: 5,
@@ -90,7 +105,7 @@ export default {
         return;
       }
       // 先确定弹道，跟上一个弹道错开即可
-      this.currentLine = (this.currentLine % this.lines) + 1;
+      this.currentLine = (this.currentLine % this.lines) + 2;
       // 从等待集合里取出第一个
       const currentBullet = this.waitBullets.shift();
       // 想要无限循环的话
@@ -118,8 +133,11 @@ export default {
       };
       this.waitBullets.push(newBullet);
     },
-    removeBullet() {
-      this.showingBullets.shift();
+    removeBullet(bullet) {
+      const index = this.showingBullets.findIndex(
+        item => item.id === bullet.id
+      );
+      this.showingBullets.splice(index, 1);
       console.log(this.showingBullets);
     }
   }
@@ -142,7 +160,8 @@ body {
 }
 .bullet-item {
   position: absolute;
-  animation: rightToleft 7s linear both;
+  transform: translate(100vw);
+  animation: rightToleft 7s linear forwards;
 }
 .bullet-item[data-line="1"] {
   top: 0;
@@ -161,7 +180,7 @@ body {
 }
 @keyframes rightToleft {
   0% {
-    transform: translate(100vw);
+    /* transform: translate(100vw); */
   }
   100% {
     transform: translate(-100%);
