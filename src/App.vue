@@ -1,7 +1,7 @@
 <template lang="pug">
 div#app
   div.bullet-wrap
-    div.bullet-item(v-for="item in showingBullets" :key="item.id" :data-line="item.line") {{item.name}}
+    div.bullet-item(v-for="item in showingBullets" @animationend='removeBullet' :key="item.id" :data-line="item.line") {{item.name}}
   div.input-wrap
     input(v-model.trim="newBullet" type='text' maxlength='12' placeholder='来说点什么')
     button.btn(@click="clickSend") 发送
@@ -19,15 +19,70 @@ export default {
         { id: getUUID(), name: "多陪伴父母", isWished: false, line: 0 },
         { id: getUUID(), name: "赚到1个亿,买别墅", isWished: false, line: 0 }
       ],
-      showingBullets: [],
+      showingBullets: [
+        {
+          id: getUUID(),
+          name: "一场说走就走的旅行",
+          isWished: false,
+          line: 1,
+          left: "280px"
+        },
+        {
+          id: getUUID(),
+          name: "结束单身汪",
+          isWished: false,
+          line: 2,
+          left: "-280px"
+        },
+        {
+          id: getUUID(),
+          name: "人生若只如初见，害",
+          isWished: false,
+          line: 2,
+          left: "500px"
+        },
+        {
+          id: getUUID(),
+          name: "明年暴瘦10斤",
+          isWished: false,
+          line: 3,
+          left: "280px"
+        },
+        {
+          id: getUUID(),
+          name: "多陪伴父母",
+          isWished: false,
+          line: 4,
+          left: "0px"
+        },
+        {
+          id: getUUID(),
+          name: "多陪伴父母",
+          isWished: false,
+          line: 4,
+          left: "380px"
+        },
+        {
+          id: getUUID(),
+          name: "赚到1个亿,买别墅",
+          isWished: false,
+          line: 5,
+          left: "141px"
+        }
+      ],
       lines: 5,
       currentLine: 1,
-      newBullet: ""
+      newBullet: "",
+      isInfinite: true
     };
   },
   mounted() {
     this.showNextBullet();
-    setInterval(this.showNextBullet, 700);
+    const timer = setInterval(this.showNextBullet, 700);
+    // 组件销毁前，清除定时器
+    this.$once("hook:beforeDestroy", () => {
+      clearInterval(timer);
+    });
   },
   methods: {
     showNextBullet() {
@@ -38,6 +93,14 @@ export default {
       this.currentLine = (this.currentLine % this.lines) + 1;
       // 从等待集合里取出第一个
       const currentBullet = this.waitBullets.shift();
+      // 想要无限循环的话
+      this.isInfinite &&
+        this.waitBullets.push({
+          id: getUUID(),
+          name: currentBullet.name,
+          isWished: false,
+          line: 0
+        });
       // 设置弹幕的弹道
       currentBullet.line = this.currentLine;
       // 弹幕放进显示集合里，弹幕开始滚动
@@ -54,6 +117,10 @@ export default {
         line: 0
       };
       this.waitBullets.push(newBullet);
+    },
+    removeBullet() {
+      this.showingBullets.shift();
+      console.log(this.showingBullets);
     }
   }
 };
